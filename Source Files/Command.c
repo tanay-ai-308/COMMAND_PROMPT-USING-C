@@ -5,7 +5,7 @@
 
 #include"Commands.h"
 
-void Date (void)
+void Show_Date (void)
 {
 	time_t tTime;
 	struct tm* ptr = NULL;
@@ -15,7 +15,7 @@ void Date (void)
 	printf(">> %d-%d-%d\n",ptr->tm_mday,(ptr->tm_mon)+1,1900+(ptr->tm_year));
 }
 
-void Time (void)
+void Show_Time (void)
 {
 	time_t tTime;
 	struct tm* ptr = NULL;
@@ -25,12 +25,12 @@ void Time (void)
 	printf(">> %d:%d:%d\n",ptr->tm_hour,ptr->tm_min,ptr->tm_sec);
 }
 
-void Version (void)
+void Show_Version (void)
 {
 	printf("%s\n",VERSION);
 }
 
-void Dir (void)
+void Show_List_Of_Files (void)
 {
 	HANDLE hFind;
 	WIN32_FIND_DATA fd;
@@ -48,7 +48,23 @@ void Dir (void)
 	}
 }
 
+void Clear_Console(void)
+{
+	HANDLE hConsole;
+	DWORD bufferSize;
+	CONSOLE_SCREEN_BUFFER_INFO BufferInfo;
+	COORD dwCoord = {0,0};
+
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(hConsole,&BufferInfo);
+
+	bufferSize = (BufferInfo.dwSize.X) * (BufferInfo.dwSize.Y);
+	
+	FillConsoleOutputCharacter(hConsole,' ',bufferSize,dwCoord,&bufferSize);
+	SetConsoleCursorPosition(hConsole,dwCoord); 
+}
+
 void Help (void)
 {
-	printf("- print.\n- date.\n- time.\n- --version.\n- dir.\n- help.\n- exit.\n");
+	printf("- print.\n- date.\n- time.\n- --version.\n- dir.\n- cls.\n- help.\n- exit.\n");
 }

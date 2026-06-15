@@ -35,19 +35,23 @@ void StartShell(void)
 			}
 		else if(!strcmp(command,"date"))
 			{
-				Date ();
+				Show_Date ();
 			}
 		else if(!strcmp(command,"time"))
 			{
-				Time ();
+				Show_Time ();
 			}
 		else if(!strcmp(command,"--version"))
 			{
-				Version ();
+				Show_Version ();
 			}
 		else if(!strcmp(command,"dir"))
 			{
-				Dir ();
+				Show_List_Of_Files ();
+			}
+		else if(!strcmp(command,"cls"))
+			{
+				Clear_Console ();
 			}
 		else if(!strcmp(command,"help"))
 			{
