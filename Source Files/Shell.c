@@ -12,8 +12,8 @@ void ShellInit(void)
 
 void StartShell(void)
 {
-	char *p = NULL;
 	char buffer[256];
+	char *arg = NULL;
 	char *command = NULL;
 
 	while(1)
@@ -25,13 +25,14 @@ void StartShell(void)
 		gets(buffer);
 
 		command = strtok(buffer," ");
+		arg = strtok(NULL,"");
 		
 		if(!strcmp(command," "))
 			continue;
 		else if(!strcmp(command,"print"))
 			{
-				p = &buffer[6];
-				printf(">>Entered String is :\n\t|%s\n",p);
+				printf(">>Entered String is :\n\t|%s\n",arg);
+				arg = NULL;
 			}
 		else if(!strcmp(command,"date"))
 			{
@@ -52,6 +53,17 @@ void StartShell(void)
 		else if(!strcmp(command,"cls"))
 			{
 				Clear_Console ();
+			}
+		else if(!strcmp(command,"cd"))
+			{
+				if(arg)
+				{
+					if(!strcmp(arg,".."))
+						Go_To_Parent_Directory ();
+					else
+						Change_Directory (arg);
+				}
+				arg = NULL;
 			}
 		else if(!strcmp(command,"help"))
 			{
