@@ -21,3 +21,15 @@ A custom command-line interpreter built using C and Win32 APIs.
 ## Build
 
 cl main.c shell.c commands.c
+
+## Windows SmartScreen Warning
+
+This executable is not digitally signed. When Running it for the First time,
+Windows may show a "Windows Protected your PC" message.
+
+click :
+
+more info -> Run anyway
+
+This source code is available in this repository and the executable can also 
+be build from source code.
