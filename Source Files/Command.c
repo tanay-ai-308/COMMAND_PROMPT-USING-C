@@ -4,6 +4,7 @@
 #include<windows.h>
 
 #include"Commands.h"
+#include"Stack.h"
 
 #define MAX_PATH 260
 
@@ -68,19 +69,31 @@ void Clear_Console(void)
 	SetConsoleCursorPosition(hConsole,dwCoord); 
 }
 
-void Change_Directory(char *lpPath)
+int Change_Directory(char *lpPath)
 {
 	DWORD Error;
 	HANDLE hFind;
 	WIN32_FIND_DATA fd;
+	char pPath[MAX_PATH];
 	char * pDirectory = NULL;
 
-	pDirectory = strtok(lpPath,"\\");
+	GetCurrentDirectory(MAX_PATH,pPath);
 
+	if(!strncmp(pPath,lpPath,3))
+	{
+		pPath[0]=lpPath[0];
+		pPath[1]=':';
+		pPath[2]='\\';
+		pPath[3]='\0';
+	
+		SetCurrentDirectory(pPath);
+		lpPath = lpPath+3;
+	}
+
+	pDirectory = strtok(lpPath,"\\");
 	while(pDirectory != NULL)
 	{
 		hFind = FindFirstFile(pDirectory,&fd);
-
 		if(SetCurrentDirectory(fd.cFileName))
 			FindClose(hFind);
 		else
@@ -99,11 +112,20 @@ void Change_Directory(char *lpPath)
 	            default:
 	                printf("\"%s\" the system cannot find the path specified.\n",pDirectory);
 			}
-			break;
+			return 0;
 		}
 		pDirectory = strtok(NULL,"\\");
 	}
+
+	return 1;
 }
+
+void Go_To_Parent_Directory(void)
+{
+	SetCurrentDirectory("..");
+}
+//========================================================
+/*
 void Go_To_Parent_Directory(void)
 {
 	char lpPath[MAX_PATH];
@@ -114,7 +136,7 @@ void Go_To_Parent_Directory(void)
 	
 	SetCurrentDirectory(lpPath);
 }
-
+/*
 void Get_Parent_Directory(char *plpPath)
 {
 	char * pSlash = NULL;
@@ -130,8 +152,49 @@ void Get_Parent_Directory(char *plpPath)
 	plpPath = pSlash;
 	(*plpPath) = '\0';
 }
+*/
+//========================================================
+
+void Push_Directory(char * arg)
+{
+	char drive[4];
+	char lpPath[MAX_PATH];
+
+	GetCurrentDirectory(MAX_PATH,lpPath);
+	
+	drive[0]=arg[0];
+	drive[1]=':';
+	drive[2]='\\';
+	drive[3]='\0';
+
+	SetCurrentDirectory(drive);
+
+	if(Change_Directory(&(arg[3])))
+	{
+		Push_Path(lpPath);
+	}
+}
+
+void Pop_Directory()
+{
+	char *arg = NULL;
+	char drive[4];
+
+	arg = Pop_Path();
+
+	if(NULL == arg)
+		return ;
+
+	drive[0]=arg[0];
+	drive[1]=':';
+	drive[2]='\\';
+	drive[3]='\0';
+	
+	SetCurrentDirectory(drive);
+	Change_Directory(&(arg[3]));
+}
 
 void Help (void)
 {
-	printf("- print ----   - Print the given string.\n\n- date         - Show today's date.\n\n- time         - Show current time.\n\n- --version    - Show current Version of the shell.\n\n- dir          - Show list of files and folder present in current directory.\n\n- cls          - Clear the console.\n\n- cd           - Change Directory.\n	cd ..	 	 - To move one step backward in shell.\n	cd ----		 - Changes Directory to given directory.\n\n- help         - Show list of commands can be used on present shell.\n\n- exit         - Ends the Shell process.\n");
+	printf("- print ----   - Print the given string.\n\n- date         - Show today's date.\n\n- time         - Show current time.\n\n- --version    - Show current Version of the shell.\n\n- dir          - Show list of files and folder present in current directory.\n\n- cls          - Clear the console.\n\n- cd           - Change Directory.\n	cd ..	 	 - To move one step backward in shell.\n	cd ----		 - Changes Directory to given directory.\n\n- help         - Show list of commands can be used on present shell.\n\n- exit         - Ends the Shell process.\n\n- pushd        - Change the path from root.\n\n- popd         - Change the path to previously pushd path.\n");
 }

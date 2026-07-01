@@ -65,6 +65,13 @@ void StartShell(void)
 				}
 				arg = NULL;
 			}
+		else if(!strcmp(command,"pushd"))
+			{
+				if(arg)
+				{
+					Push_Directory(arg);
+				}
+			}
 		else if(!strcmp(command,"help"))
 			{
 				Help ();
@@ -72,6 +79,6 @@ void StartShell(void)
 		else if(!strcmp(command,"exit"))
 			return ;
 		else
-			printf("\"%s\" : Command not found.\n",buffer);	
+			printf("\"%s\" : No such internal or extrenal command.\n",buffer);	
 	}
 }
